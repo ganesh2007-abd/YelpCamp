@@ -11,7 +11,9 @@
     <h1>All Campgrounds</h1>
     <% for(let cmp of campgrounds) {%>
         <li>
-            <%= cmp.title %>
+            <a href="/campgrounds/<%= cmp._id %>">
+                <%= cmp.title %>
+            </a>
         </li>
         <% } %>
 </body>
