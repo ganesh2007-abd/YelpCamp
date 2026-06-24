@@ -9,13 +9,16 @@
 
 <body>
     <h1>All Campgrounds</h1>
-    <% for(let cmp of campgrounds) {%>
-        <li>
-            <a href="/campgrounds/<%= cmp._id %>">
-                <%= cmp.title %>
-            </a>
-        </li>
-        <% } %>
+    <a href="/campgrounds/new">Add new camp</a>
+    <ul>
+        <% for(let cmp of campgrounds) {%>
+            <li>
+                <a href="/campgrounds/<%= cmp._id %>">
+                    <%= cmp.title %>
+                </a>
+            </li>
+            <% } %>
+    </ul>
 </body>
 
 </html>
