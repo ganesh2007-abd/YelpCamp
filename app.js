@@ -5,7 +5,7 @@ const mongoose = require('mongoose')
 const Campground = require('./models/campground')
 
 mongoose.set('strictQuery', true);
-mongoose.connect('mongodb://127.0.0.1:27017/FarmStand')
+mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp')
     .then(() => {
         console.log("Mongodb Connection Open!")
     })
