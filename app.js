@@ -3,6 +3,7 @@ const ejs = require('ejs')
 const path = require('path')
 const mongoose = require('mongoose')
 const Campground = require('./models/campground')
+const methodOverride = require('method-override')
 
 mongoose.set('strictQuery', true);
 mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp')
@@ -21,6 +22,7 @@ app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', ejs)
 
 app.use(express.urlencoded({ extended: true }))
+app.use(methodOverride('_method'))
 
 app.get('/', (req, res) => {
     res.render('home.ejs')
@@ -47,11 +49,32 @@ app.get('/campgrounds/:id', async (req, res) => {
     res.render('campgrounds/show.ejs', { campground })
 })
 
+
+app.get('/campgrounds/:id/edit', async (req, res) => {
+    const { id } = req.params
+    const campground = await Campground.findById(id)
+    res.render('campgrounds/edit.ejs', { campground })
+})
+
+
 app.post('/campgrounds', async (req, res) => {
     const campground = new Campground(req.body.campground)
     await campground.save()
     res.redirect(`/campgrounds/${campground._id}`)
 })
+
+
+app.put('/campgrounds/:id', async (req, res) => {
+    // console.log('Entered put request')
+    const { id } = req.params
+    // console.log(id)
+    const campground = await Campground.findByIdAndUpdate(req.params.id, req.body.campground)
+    // console.log(campground)
+    res.redirect(`/campgrounds/${campground._id}`)
+})
+
+
+
 
 app.listen(3000, () => {
     console.log("Listening on 3000...")
