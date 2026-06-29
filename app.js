@@ -8,6 +8,7 @@ const methodOverride = require('method-override')
 const expressError = require('./utils/ExpressError')
 const catchAsync = require('./utils/catchAsync')
 const Joi = require('joi')
+const { campgroundSchema } = require('./schemas')
 
 mongoose.set('strictQuery', true);
 mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp')
@@ -31,18 +32,28 @@ app.set('view engine', 'ejs')
 app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 
+const validatecampground = (req, res, next) => {
+    const { error } = campgroundSchema.validate(req.body)
+    if (error) {
+        const msg = error.details.map(el => el.message).join(',')
+        throw new expressError(msg, 400)
+    }
+    else {
+        next()
+    }
+}
 
 app.get('/', (req, res) => {
     res.render('home.ejs')
 })
 
-app.get('/makecampground', catchAsync(async (req, res) => {
+app.get('/makecampground', validatecampground, catchAsync(async (req, res) => {
     const Camp = new Campground({ title: "My backyard", price: "26", description: "very cheap" })
     await Camp.save()
     res.send(Camp)
 }))
 
-app.get('/campgrounds', catchAsync(async (req, res) => {
+app.get('/campgrounds', validatecampground, catchAsync(async (req, res) => {
     const campgrounds = await Campground.find({})
     res.render('campgrounds/index.ejs', { campgrounds })
 }))
@@ -51,35 +62,22 @@ app.get('/campgrounds/new', (req, res) => {
     res.render('campgrounds/new.ejs')
 })
 
-app.get('/campgrounds/:id', catchAsync(async (req, res) => {
+app.get('/campgrounds/:id', validatecampground, catchAsync(async (req, res) => {
     const { id } = req.params
     const campground = await Campground.findById(id)
     res.render('campgrounds/show.ejs', { campground })
 }))
 
 
-app.get('/campgrounds/:id/edit', catchAsync(async (req, res) => {
+app.get('/campgrounds/:id/edit', validatecampground, catchAsync(async (req, res) => {
     const { id } = req.params
     const campground = await Campground.findById(id)
     res.render('campgrounds/edit.ejs', { campground })
 }))
 
 
-app.post('/campgrounds', catchAsync(async (req, res) => {
-    const campgroundSchema = Joi.object({
-        campground: Joi.object({
-            title: Joi.string().required(),
-            price: Joi.number().required().min(0),
-            image: Joi.string().required(),
-            location: Joi.string().required(),
-            description: Joi.string().required()
-        }).required()
-    })
-    const { error } = campgroundSchema.validate(req.body)
-    if (error) {
-        const msg = error.details.map(el => el.message).join(',')
-        throw new expressError(msg, 400)
-    }
+app.post('/campgrounds', validatecampground, catchAsync(async (req, res) => {
+
     const campground = new Campground(req.body.campground)
     await campground.save()
     res.redirect(`/campgrounds/${campground._id}`)
@@ -87,7 +85,7 @@ app.post('/campgrounds', catchAsync(async (req, res) => {
 }))
 
 
-app.put('/campgrounds/:id', catchAsync(async (req, res) => {
+app.put('/campgrounds/:id', validatecampground, catchAsync(async (req, res) => {
     // console.log('Entered put request')
     const { id } = req.params
     // console.log(id)
@@ -96,7 +94,7 @@ app.put('/campgrounds/:id', catchAsync(async (req, res) => {
     res.redirect(`/campgrounds/${campground._id}`)
 }))
 
-app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
+app.delete('/campgrounds/:id', validatecampground, catchAsync(async (req, res) => {
     const { id } = req.params
     const campground = await Campground.findByIdAndDelete(id)
     res.redirect('/campgrounds')
