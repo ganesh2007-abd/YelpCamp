@@ -65,7 +65,7 @@ app.get('/campgrounds/:id/edit', catchAsync(async (req, res) => {
 
 
 app.post('/campgrounds', catchAsync(async (req, res) => {
-
+    if (!req.body.campground) throw new expressError('campground not found', 500)
     const campground = new Campground(req.body.campground)
     await campground.save()
     res.redirect(`/campgrounds/${campground._id}`)
@@ -87,6 +87,10 @@ app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
     const campground = await Campground.findByIdAndDelete(id)
     res.redirect('/campgrounds')
 }))
+
+app.all('/*splats', (req, res, next) => {
+    res.status(404).send('Page not found')
+})
 
 app.use((err, req, res, next) => {
     res.send("Something went wrong")
