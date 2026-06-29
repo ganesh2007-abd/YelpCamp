@@ -89,11 +89,15 @@ app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
 }))
 
 app.all('/*splats', (req, res, next) => {
-    res.status(404).send('Page not found')
+    next(new expressError('Page Not Found', 404))
 })
 
 app.use((err, req, res, next) => {
-    res.send("Something went wrong")
+    const { status = 500 } = err
+    if (!err.message) {
+        err.message = 'something wrong!'
+    }
+    res.status(status).render('error', { err })
 })
 
 app.listen(3000, () => {
