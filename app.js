@@ -9,6 +9,7 @@ const expressError = require('./utils/ExpressError')
 const catchAsync = require('./utils/catchAsync')
 const Joi = require('joi')
 const { campgroundSchema } = require('./schemas')
+const Review = require('./models/review')
 
 mongoose.set('strictQuery', true);
 mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp')
@@ -99,6 +100,19 @@ app.delete('/campgrounds/:id', validatecampground, catchAsync(async (req, res) =
     const campground = await Campground.findByIdAndDelete(id)
     res.redirect('/campgrounds')
 }))
+
+
+//Reviews
+
+app.post('/campgrounds/:id/review', catchAsync(async (req, res) => {
+    const campground = await Campground.findById(req.params.id)
+    const rev = new Review(req.body.review)
+    campground.review.push(rev);
+    await campground.save()
+    await rev.save()
+    res.redirect(`/campgrounds/${campground._id}`)
+}))
+
 
 app.all('/*splats', (req, res, next) => {
     next(new expressError('Page Not Found', 404))
