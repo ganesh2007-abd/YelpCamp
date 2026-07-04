@@ -106,7 +106,7 @@ app.put('/campgrounds/:id', validatecampground, catchAsync(async (req, res) => {
     res.redirect(`/campgrounds/${campground._id}`)
 }))
 
-app.delete('/campgrounds/:id', validatecampground, catchAsync(async (req, res) => {
+app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
     const { id } = req.params
     const campground = await Campground.findByIdAndDelete(id)
     res.redirect('/campgrounds')
