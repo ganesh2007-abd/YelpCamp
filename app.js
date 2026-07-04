@@ -8,7 +8,7 @@ const methodOverride = require('method-override')
 const expressError = require('./utils/ExpressError')
 const catchAsync = require('./utils/catchAsync')
 const Joi = require('joi')
-const { campgroundSchema } = require('./schemas')
+const { campgroundSchema, reviewSchema } = require('./schemas')
 const Review = require('./models/review')
 
 mongoose.set('strictQuery', true);
@@ -35,6 +35,17 @@ app.use(methodOverride('_method'))
 
 const validatecampground = (req, res, next) => {
     const { error } = campgroundSchema.validate(req.body)
+    if (error) {
+        const msg = error.details.map(el => el.message).join(',')
+        throw new expressError(msg, 400)
+    }
+    else {
+        next()
+    }
+}
+
+const validatereview = (req, res, next) => {
+    const { error } = reviewSchema.validate(req.body)
     if (error) {
         const msg = error.details.map(el => el.message).join(',')
         throw new expressError(msg, 400)
@@ -104,7 +115,7 @@ app.delete('/campgrounds/:id', validatecampground, catchAsync(async (req, res) =
 
 //Reviews
 
-app.post('/campgrounds/:id/review', catchAsync(async (req, res) => {
+app.post('/campgrounds/:id/review', validatereview, catchAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id)
     const rev = new Review(req.body.review)
     campground.review.push(rev);
