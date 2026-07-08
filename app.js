@@ -13,7 +13,7 @@ const Review = require('./models/review')
 
 
 const Campgroundroutes = require('./routes/campground')
-
+const Reviewroutes = require('./routes/review')
 
 mongoose.set('strictQuery', true);
 mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp')
@@ -39,41 +39,7 @@ app.use(methodOverride('_method'))
 
 
 app.use('/campgrounds', Campgroundroutes)
-
-
-
-const validatereview = (req, res, next) => {
-    const { error } = reviewSchema.validate(req.body)
-    if (error) {
-        const msg = error.details.map(el => el.message).join(',')
-        throw new expressError(msg, 400)
-    }
-    else {
-        next()
-    }
-}
-
-
-
-
-//Reviews
-
-app.post('/campgrounds/:id/review', validatereview, catchAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id)
-    const rev = new Review(req.body.review)
-    campground.review.push(rev);
-    await campground.save()
-    await rev.save()
-    res.redirect(`/campgrounds/${campground._id}`)
-}))
-
-app.delete('/campgrounds/:id/reviews/:reviewid', catchAsync(async (req, res) => {
-    const { id, reviewid } = req.params
-    await Campground.findByIdAndUpdate(id, { $pull: { review: reviewid } })
-    await Review.findByIdAndDelete(reviewid)
-    res.redirect(`/campgrounds/${id}`)
-    // res.send('delete me bruhh')
-}))
+app.use('/campgrounds/:id/reviews', Reviewroutes)
 
 
 app.all('/*splats', (req, res, next) => {
