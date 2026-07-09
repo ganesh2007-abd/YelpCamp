@@ -11,6 +11,7 @@ const Joi = require('joi')
 const { campgroundSchema, reviewSchema } = require('./schemas')
 const Review = require('./models/review')
 
+const session = require('express-session')
 
 const Campgroundroutes = require('./routes/campground')
 const Reviewroutes = require('./routes/review')
@@ -41,6 +42,19 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 app.use('/campgrounds', Campgroundroutes)
 app.use('/campgrounds/:id/reviews', Reviewroutes)
+
+const sessionConfig = {
+    secret: 'Thisissecret',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+        httponly: true
+    }
+}
+
+app.use(session(sessionConfig))
 
 
 app.all('/*splats', (req, res, next) => {

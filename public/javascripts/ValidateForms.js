@@ -1,3 +1,6 @@
+// alert("VALIDATE JS IS RUNNING");
+// console.log("VALIDATE JS IS RUNNING");
+
 (function () {
     'use strict'
 
