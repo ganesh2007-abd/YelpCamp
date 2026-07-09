@@ -54,6 +54,7 @@ router.get('/:id/edit', validatecampground, catchAsync(async (req, res) => {
 router.post('/', validatecampground, catchAsync(async (req, res) => {
     const campground = new Campground(req.body.campground)
     await campground.save()
+    req.flash('success', 'successfully added!')
     res.redirect(`/campgrounds/${campground._id}`)
 }))
 

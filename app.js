@@ -12,6 +12,7 @@ const { campgroundSchema, reviewSchema } = require('./schemas')
 const Review = require('./models/review')
 
 const session = require('express-session')
+const flash = require('connect-flash')
 
 const Campgroundroutes = require('./routes/campground')
 const Reviewroutes = require('./routes/review')
@@ -40,9 +41,6 @@ app.use(methodOverride('_method'))
 
 app.use(express.static(path.join(__dirname, 'public')))
 
-app.use('/campgrounds', Campgroundroutes)
-app.use('/campgrounds/:id/reviews', Reviewroutes)
-
 const sessionConfig = {
     secret: 'Thisissecret',
     resave: false,
@@ -55,6 +53,16 @@ const sessionConfig = {
 }
 
 app.use(session(sessionConfig))
+
+app.use(flash())
+app.use((req, res, next) => {
+    res.locals.success = req.flash('success')
+    next()
+})
+
+app.use('/campgrounds', Campgroundroutes)
+app.use('/campgrounds/:id/reviews', Reviewroutes)
+
 
 
 app.all('/*splats', (req, res, next) => {
