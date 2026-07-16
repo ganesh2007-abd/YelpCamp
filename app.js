@@ -10,6 +10,9 @@ const catchAsync = require('./utils/catchAsync')
 const Joi = require('joi')
 const { campgroundSchema, reviewSchema } = require('./schemas')
 const Review = require('./models/review')
+const User = require('./models/user')
+const passport = require('passport')
+const localStrategy = require('passport-local')
 
 const session = require('express-session')
 const flash = require('connect-flash')
@@ -41,6 +44,8 @@ app.use(methodOverride('_method'))
 
 app.use(express.static(path.join(__dirname, 'public')))
 
+
+
 const sessionConfig = {
     secret: 'Thisissecret',
     resave: false,
@@ -61,10 +66,21 @@ app.use((req, res, next) => {
     next()
 })
 
+app.use(passport.initialize())
+app.use(passport.session())
+
+passport.use(new localStrategy(User.authenticate()))
+passport.serializeUser(User.serializeUser())
+passport.deserializeUser(User.deserializeUser())
+
 app.use('/campgrounds', Campgroundroutes)
 app.use('/campgrounds/:id/reviews', Reviewroutes)
 
-
+app.get('/fakeuser', async (req, res) => {
+    const user = new User({ email: 'bvgsasi2024@gmail.com', username: 'bvg' })
+    const newuser = await User.register(user, 'chicken')
+    res.send(newuser)
+})
 
 app.all('/*splats', (req, res, next) => {
     next(new expressError('Page Not Found', 404))
