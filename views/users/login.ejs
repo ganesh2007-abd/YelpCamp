@@ -1,0 +1,29 @@
+<% layout('layouts/boilerplate') %>
+    <% if(error && error.length) {%>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <%= error %>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+        </div>
+        <% } %>
+
+
+
+            <form action="/login" method="POST" class="needs-validation" novalidate>
+                <div class="mb-3">
+                    <label class="form-label" for="username">Enter username:</label>
+                    <input class="form-control" type="text" id="username" name="username" required>
+                    <div class="valid-feedback">
+                        Looks Good
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="password">Enter password:</label>
+                    <input class="form-control" type="password" id="password" name="password" required>
+                    <div class="valid-feedback">
+                        Looks Good
+                    </div>
+                </div>
+                <button class="btn btn-success">Login</button>
+            </form>
