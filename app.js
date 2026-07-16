@@ -19,6 +19,7 @@ const flash = require('connect-flash')
 
 const Campgroundroutes = require('./routes/campground')
 const Reviewroutes = require('./routes/review')
+const registerroutes = require('./routes/users')
 
 mongoose.set('strictQuery', true);
 mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp')
@@ -75,6 +76,7 @@ passport.deserializeUser(User.deserializeUser())
 
 app.use('/campgrounds', Campgroundroutes)
 app.use('/campgrounds/:id/reviews', Reviewroutes)
+app.use('/', registerroutes)
 
 app.get('/fakeuser', async (req, res) => {
     const user = new User({ email: 'bvgsasi2024@gmail.com', username: 'bvg' })
