@@ -18,7 +18,7 @@ const { isLoggedin, isAuthor, validatecampground } = require('../middleware')
 //     res.send(Camp)
 // }))
 
-router.get('/', validatecampground, catchAsync(async (req, res) => {
+router.get('/', catchAsync(async (req, res) => {
     const campgrounds = await Campground.find({})
     res.render('campgrounds/index.ejs', { campgrounds })
 }))
@@ -27,7 +27,7 @@ router.get('/new', isLoggedin, (req, res) => {
     res.render('campgrounds/new.ejs')
 })
 
-router.get('/:id', validatecampground, catchAsync(async (req, res) => {
+router.get('/:id', catchAsync(async (req, res) => {
     const { id } = req.params
     const campground = await Campground.findById(id).populate({
         path: 'review',
@@ -44,7 +44,7 @@ router.get('/:id', validatecampground, catchAsync(async (req, res) => {
 }))
 
 
-router.get('/:id/edit', isLoggedin, isAuthor, validatecampground, catchAsync(async (req, res) => {
+router.get('/:id/edit', isLoggedin, isAuthor, catchAsync(async (req, res) => {
     const { id } = req.params
     const campground = await Campground.findById(id)
     if (!campground) {
