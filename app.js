@@ -72,7 +72,7 @@ app.use(flash())
 
 app.use((req, res, next) => {
     res.locals.currUser = req.user
-    console.log(req.user)
+    // console.log(req.user)
     res.locals.success = req.flash('success')
     res.locals.error = req.flash('error')
     next()
