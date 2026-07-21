@@ -5,19 +5,7 @@ const catchAsync = require('../utils/catchAsync')
 const Campground = require('../models/campground')
 const { campgroundSchema } = require('../schemas')
 
-const { isLoggedin } = require('../middleware')
-
-
-const validatecampground = (req, res, next) => {
-    const { error } = campgroundSchema.validate(req.body)
-    if (error) {
-        const msg = error.details.map(el => el.message).join(',')
-        throw new expressError(msg, 400)
-    }
-    else {
-        next()
-    }
-}
+const { isLoggedin, isAuthor, validatecampground } = require('../middleware')
 
 
 // router.get('/', (req, res) => {
@@ -51,7 +39,7 @@ router.get('/:id', validatecampground, catchAsync(async (req, res) => {
 }))
 
 
-router.get('/:id/edit', isLoggedin, validatecampground, catchAsync(async (req, res) => {
+router.get('/:id/edit', isLoggedin, isAuthor, validatecampground, catchAsync(async (req, res) => {
     const { id } = req.params
     const campground = await Campground.findById(id)
     if (!campground) {
@@ -71,7 +59,7 @@ router.post('/', isLoggedin, validatecampground, catchAsync(async (req, res) => 
 }))
 
 
-router.put('/:id', isLoggedin, validatecampground, catchAsync(async (req, res) => {
+router.put('/:id', isLoggedin, isAuthor, validatecampground, catchAsync(async (req, res) => {
     // console.log('Entered put request')
     const { id } = req.params
     // console.log(id)
@@ -81,7 +69,7 @@ router.put('/:id', isLoggedin, validatecampground, catchAsync(async (req, res) =
     res.redirect(`/campgrounds/${campground._id}`)
 }))
 
-router.delete('/:id', isLoggedin, catchAsync(async (req, res) => {
+router.delete('/:id', isLoggedin, isAuthor, catchAsync(async (req, res) => {
     const { id } = req.params
     const campground = await Campground.findByIdAndDelete(id)
     req.flash('success', 'successfully deleted!')
