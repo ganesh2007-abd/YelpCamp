@@ -7,25 +7,11 @@ const Review = require('../models/review')
 const { reviewSchema } = require('../schemas')
 const { validatereview, isLoggedin, reviewAuthor } = require('../middleware')
 
+const reviews = require('../controllers/reviews')
 
-router.post('/', isLoggedin, validatereview, catchAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id)
-    const rev = new Review(req.body.review)
-    rev.author = req.user._id
-    campground.review.push(rev);
-    await campground.save()
-    await rev.save()
-    req.flash('success', 'successfully added review!')
-    res.redirect(`/campgrounds/${campground._id}`)
-}))
 
-router.delete('/:reviewid', isLoggedin, reviewAuthor, catchAsync(async (req, res) => {
-    const { id, reviewid } = req.params
-    await Campground.findByIdAndUpdate(id, { $pull: { review: reviewid } })
-    await Review.findByIdAndDelete(reviewid)
-    req.flash('success', 'successfully deleted review!')
-    res.redirect(`/campgrounds/${id}`)
-    // res.send('delete me bruhh')
-}))
+router.post('/', isLoggedin, validatereview, catchAsync(reviews.createReview))
+
+router.delete('/:reviewid', isLoggedin, reviewAuthor, catchAsync(reviews.deleteReview))
 
 module.exports = router;
