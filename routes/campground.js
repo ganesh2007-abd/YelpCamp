@@ -8,6 +8,9 @@ const { campgroundSchema } = require('../schemas')
 const { isLoggedin, isAuthor, validatecampground } = require('../middleware')
 const campgrounds = require('../controllers/campgrounds')
 
+const multer = require('multer')
+const upload = multer({ dest: 'uploads' })
+
 
 // router.get('/', (req, res) => {
 //     res.render('home.ejs')
@@ -21,7 +24,12 @@ const campgrounds = require('../controllers/campgrounds')
 
 router.route('/')
     .get(catchAsync(campgrounds.index))
-    .post(isLoggedin, validatecampground, catchAsync(campgrounds.createCampground))
+    // .post(isLoggedin, validatecampground, catchAsync(campgrounds.createCampground))
+    .post(upload.single('image'), (req, res) => {
+        console.log(req.file)
+        res.send("It worked")
+    })
+
 
 
 router.get('/new', isLoggedin, campgrounds.renderNewForm)
