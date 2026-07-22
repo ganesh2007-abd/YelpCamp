@@ -1,3 +1,9 @@
+if (process.env.NODE_ENV !== "production") {
+    require('dotenv').config()
+}
+
+console.log(process.env.CLOUDINARY_SECRET)
+
 const express = require('express')
 const ejs = require('ejs')
 const path = require('path')
