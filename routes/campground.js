@@ -19,21 +19,19 @@ const campgrounds = require('../controllers/campgrounds')
 //     res.send(Camp)
 // }))
 
-router.get('/', catchAsync(campgrounds.index))
+router.route('/')
+    .get(catchAsync(campgrounds.index))
+    .post(isLoggedin, validatecampground, catchAsync(campgrounds.createCampground))
+
 
 router.get('/new', isLoggedin, campgrounds.renderNewForm)
 
-router.get('/:id', catchAsync(campgrounds.showCampground))
+router.route('/:id')
+    .get(catchAsync(campgrounds.showCampground))
+    .put(isLoggedin, isAuthor, validatecampground, catchAsync(campgrounds.editCampground))
+    .delete(isLoggedin, isAuthor, catchAsync(campgrounds.deleteCampground))
 
 
 router.get('/:id/edit', isLoggedin, isAuthor, catchAsync(campgrounds.renderEditForm))
-
-
-router.post('/', isLoggedin, validatecampground, catchAsync(campgrounds.createCampground))
-
-
-router.put('/:id', isLoggedin, isAuthor, validatecampground, catchAsync(campgrounds.editCampground))
-
-router.delete('/:id', isLoggedin, isAuthor, catchAsync(campgrounds.deleteCampground))
 
 module.exports = router
