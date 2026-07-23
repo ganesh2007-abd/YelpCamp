@@ -2,8 +2,6 @@ if (process.env.NODE_ENV !== "production") {
     require('dotenv').config()
 }
 
-console.log(process.env.CLOUDINARY_SECRET)
-
 const express = require('express')
 const ejs = require('ejs')
 const path = require('path')
@@ -26,6 +24,8 @@ const flash = require('connect-flash')
 const Campgroundroutes = require('./routes/campground')
 const Reviewroutes = require('./routes/review')
 const registerroutes = require('./routes/users')
+
+
 
 mongoose.set('strictQuery', true);
 mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp')

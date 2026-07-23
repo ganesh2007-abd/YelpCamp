@@ -4,12 +4,13 @@ const expressError = require('../utils/ExpressError')
 const catchAsync = require('../utils/catchAsync')
 const Campground = require('../models/campground')
 const { campgroundSchema } = require('../schemas')
+const { storage } = require('../cloudinary/index')
 
 const { isLoggedin, isAuthor, validatecampground } = require('../middleware')
 const campgrounds = require('../controllers/campgrounds')
 
 const multer = require('multer')
-const upload = multer({ dest: 'uploads' })
+const upload = multer({ storage })
 
 
 // router.get('/', (req, res) => {
@@ -25,8 +26,8 @@ const upload = multer({ dest: 'uploads' })
 router.route('/')
     .get(catchAsync(campgrounds.index))
     // .post(isLoggedin, validatecampground, catchAsync(campgrounds.createCampground))
-    .post(upload.single('image'), (req, res) => {
-        console.log(req.file)
+    .post(upload.array('image'), (req, res) => {
+        console.log(req.files, req.body)
         res.send("It worked")
     })
 
