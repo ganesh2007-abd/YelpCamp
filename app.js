@@ -27,7 +27,7 @@ const registerroutes = require('./routes/users')
 
 
 mongoose.set('strictQuery', true);
-mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp')
+mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp-maptiler')
     .then(() => {
         console.log("Mongodb Connection Open!")
     })

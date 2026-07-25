@@ -1,6 +1,9 @@
 const Campground = require('../models/campground')
 const { cloudinary } = require('../cloudinary')
 
+const maptiler = require('@maptiler/client')
+maptiler.config.apiKey = process.env.MAPTILER_API_KEY
+
 module.exports.index = async (req, res) => {
     const campgrounds = await Campground.find({})
     res.render('campgrounds/index.ejs', { campgrounds })
@@ -11,7 +14,14 @@ module.exports.renderNewForm = (req, res) => {
 }
 
 module.exports.createCampground = async (req, res) => {
+    const geoData = await maptiler.geocoding.forward(req.body.campground.location, { limit: 1 })
+    if (!geoData.features?.length) {
+        req.flash('error', 'Cant find that campground!')
+        return res.redirect('/campgrounds/new')
+    }
     const campground = new Campground(req.body.campground)
+    campground.geometry = geoData.features[0].geometry
+    campground.location = geoData.features[0].place_name
     campground.images = req.files.map(f => ({ url: f.path, filename: f.filename }))
     campground.author = req.user._id
     await campground.save()
@@ -40,7 +50,7 @@ module.exports.renderEditForm = async (req, res) => {
     const { id } = req.params
     const campground = await Campground.findById(id)
     if (!campground) {
-        req.flash('error', 'cant find that campground!')
+        req.flash('error', 'cant find that location!')
         return res.redirect('/campgrounds')
     }
     res.render('campgrounds/edit.ejs', { campground })
@@ -51,7 +61,14 @@ module.exports.editCampground = async (req, res) => {
     const { id } = req.params
     // console.log(req.body)
     // console.log(id)
+    const geoData = await maptiler.geocoding.forward(req.body.location, { limit: 1 })
+    if (!geoData.features?.length) {
+        req.flash('error', 'Cant find that location!')
+        return res.redirect(`/campgrounds/${id}`)
+    }
     const campground = await Campground.findByIdAndUpdate(req.params.id, req.body.campground)
+    campground.geometry = geoData.features[0].geometry
+    campground.location = geoData.features[0].place_name
     const imgs = req.files.map(f => ({ url: f.path, filename: f.filename }))
     campground.images.push(...imgs)
 
