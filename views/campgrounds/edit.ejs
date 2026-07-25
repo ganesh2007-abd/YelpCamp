@@ -22,10 +22,10 @@
                         Looks Good
                     </div>
                 </div>
-                <div class="mb-3">
+                <!-- <div class="mb-3">
                     <label class="form-label" for="image">Upload Images:</label>
                     <input type="file" name="image" id="" multiple>
-                </div>
+                </div> -->
                 <div class="mb-3">
                     <label class="form-label" for="price">Enter price:</label>
                     <input class="form-control" type="Number" id="price" name="campground[price]"
@@ -42,6 +42,12 @@
                         Looks Good
                     </div>
                 </div>
+
+                <div class="mb-3">
+                    <label for="formFile" class="form-label">Add Images</label>
+                    <input class="form-control" type="file" id="formFile" name="image" multiple>
+                </div>
+
                 <div class="mb-3">
                     <button class="btn btn-info">Update</button>
                     <a href="/campgrounds" class="btn btn-danger">Cancel</a>
