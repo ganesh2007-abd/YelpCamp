@@ -157,7 +157,7 @@
                     <%-"<script>"%>
                         const maptilerApiKey = '<%- process.env.MAPTILER_API_KEY %>';
                             const campground = <%- JSON.stringify(campground) %>;
-                                <%-"< /script>"%>
+                                <%- "</script>" %>
 
                                     console.log("API Key:", maptilerApiKey);
                                     console.log("Campground:", campground);
