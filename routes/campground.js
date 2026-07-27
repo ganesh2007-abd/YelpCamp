@@ -14,7 +14,7 @@ const upload = multer({ storage })
 
 
 // router.get('/', (req, res) => {
-//     res.render('home.ejs')
+//     res.render('users/home.ejs')
 // })
 
 // router.get('/makecampground', validatecampground, catchAsync(async (req, res) => {

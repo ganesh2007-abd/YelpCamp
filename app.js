@@ -105,6 +105,10 @@ app.use((err, req, res, next) => {
     res.status(status).render('error', { err })
 })
 
+app.get('/', (req, res) => {
+    res.render('users/home.ejs')
+})
+
 app.listen(3000, () => {
     console.log("Listening on 3000...")
 })
