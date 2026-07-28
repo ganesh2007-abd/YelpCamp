@@ -17,6 +17,7 @@ const Review = require('./models/review')
 const User = require('./models/user')
 const passport = require('passport')
 const localStrategy = require('passport-local')
+const mongoSanitize = require('express-mongo-sanitize')
 
 const session = require('express-session')
 const flash = require('connect-flash')
@@ -50,6 +51,9 @@ app.use(methodOverride('_method'))
 
 app.use(express.static(path.join(__dirname, 'public')))
 
+app.use(mongoSanitize({
+    replaceWith: '_'
+}))
 
 
 const sessionConfig = {
@@ -76,6 +80,7 @@ passport.deserializeUser(User.deserializeUser())
 app.use(flash())
 
 app.use((req, res, next) => {
+    console.log(req.query)
     res.locals.currUser = req.user
     // console.log(req.user)
     res.locals.success = req.flash('success')
