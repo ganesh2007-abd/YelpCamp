@@ -57,6 +57,7 @@ app.use(mongoSanitize({
 
 
 const sessionConfig = {
+    name: 'Session',
     secret: 'Thisissecret',
     resave: false,
     saveUninitialized: true,
@@ -80,7 +81,7 @@ passport.deserializeUser(User.deserializeUser())
 app.use(flash())
 
 app.use((req, res, next) => {
-    console.log(req.query)
+    // console.log(req.query)
     res.locals.currUser = req.user
     // console.log(req.user)
     res.locals.success = req.flash('success')
