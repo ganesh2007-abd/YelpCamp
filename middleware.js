@@ -43,6 +43,7 @@ module.exports.reviewAuthor = async (req, res, next) => {
 }
 
 module.exports.validatecampground = (req, res, next) => {
+    console.log(req.body)
     const { error } = campgroundSchema.validate(req.body)
     if (error) {
         const msg = error.details.map(el => el.message).join(',')
