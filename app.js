@@ -18,6 +18,7 @@ const User = require('./models/user')
 const passport = require('passport')
 const localStrategy = require('passport-local')
 const mongoSanitize = require('express-mongo-sanitize')
+const helmet = require('helmet')
 
 const session = require('express-session')
 const flash = require('connect-flash')
@@ -46,6 +47,10 @@ app.engine('ejs', ejsmate)
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 
+app.use(helmet({
+    contentSecurityPolicy: false
+}))
+
 app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 
@@ -54,6 +59,8 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use(mongoSanitize({
     replaceWith: '_'
 }))
+
+
 
 
 const sessionConfig = {
