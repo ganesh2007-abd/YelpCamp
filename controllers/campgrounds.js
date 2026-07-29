@@ -61,12 +61,14 @@ module.exports.editCampground = async (req, res) => {
     const { id } = req.params
     // console.log(req.body)
     // console.log(id)
-    const geoData = await maptiler.geocoding.forward(req.body.location, { limit: 1 })
+    const geoData = await maptiler.geocoding.forward(req.body.campground.location, { limit: 1 })
     if (!geoData.features?.length) {
         req.flash('error', 'Cant find that location!')
         return res.redirect(`/campgrounds/${id}`)
     }
+    // console.log(geoData)
     const campground = await Campground.findByIdAndUpdate(req.params.id, req.body.campground)
+    // console.log(campground)
     campground.geometry = geoData.features[0].geometry
     campground.location = geoData.features[0].place_name
     const imgs = req.files.map(f => ({ url: f.path, filename: f.filename }))
