@@ -19,12 +19,26 @@ const passport = require('passport')
 const localStrategy = require('passport-local')
 const mongoSanitize = require('express-mongo-sanitize')
 const helmet = require('helmet')
+const { MongoStore } = require('connect-mongo');
 
 
-const dbUrl = process.env.DB_URL
+// const dbUrl = process.env.DB_URL
+const dbUrl = 'mongodb://127.0.0.1:27017/yelp-camp-maptiler'
 
 const session = require('express-session')
 const flash = require('connect-flash')
+
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    touchAfter: 24 * 60 * 60,
+    crypto: {
+        secret: 'thisshouldbeabettersecret!'
+    }
+});
+
+store.on("error", function (e) {
+    console.log("SESSION STORE ERROR", e)
+})
 
 const Campgroundroutes = require('./routes/campground')
 const Reviewroutes = require('./routes/review')
@@ -63,21 +77,21 @@ app.use(mongoSanitize({
     replaceWith: '_'
 }))
 
-
+const secret = process.env.SECRET || "thisshouldbeabettersecret";
 
 
 const sessionConfig = {
-    name: 'Session',
-    secret: 'Thisissecret',
+    store,
+    name: 'session',
+    secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
+        httpOnly: true,
         expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
-        maxAge: 1000 * 60 * 60 * 24 * 7,
-        httponly: true
+        maxAge: 1000 * 60 * 60 * 24 * 7
     }
 }
-
 app.use(session(sessionConfig))
 
 app.use(passport.initialize())
