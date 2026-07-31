@@ -15,19 +15,19 @@ module.exports.renderNewForm = (req, res) => {
 
 module.exports.createCampground = async (req, res) => {
     const geoData = await maptiler.geocoding.forward(req.body.campground.location, { limit: 1 })
-    console.log(geoData)
+    // console.log(geoData)
     if (!geoData.features?.length) {
         req.flash('error', 'Cant find that campground!')
         return res.redirect('/campgrounds/new')
     }
     const campground = await new Campground(req.body.campground)
-    console.log(campground)
+    // console.log(campground)
     campground.geometry = geoData.features[0].geometry
     campground.location = geoData.features[0].place_name
     campground.images = req.files.map(f => ({ url: f.path, filename: f.filename }))
     campground.author = req.user._id
     await campground.save()
-    console.log(campground)
+    // console.log(campground)
     req.flash('success', 'successfully added!')
     res.redirect(`/campgrounds/${campground._id}`)
 }
